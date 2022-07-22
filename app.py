@@ -60,11 +60,11 @@ def download():
 
         df.index.rename('Timestamp', inplace = True)
 
-        response=make_response(df.to_csv())
-        cd = 'attachment; filename=CHE Lab Data.csv'
-        response.headers['Content-Disposition'] = cd
+        response=make_response(df.to_csv(date_format='%H:%M:%S'))
+        csvname = 'AREA' + project + '-' + date + '.csv'
+        response.headers['Content-Disposition'] = 'attachment; filename=' + csvname
         response.mimetype = 'text/csv'
-        logging.info("Sending CSV file over http with response info %s", response)
+        logging.info("Sending CSV file %s over http with response info %s", csvname, response)
         return response
 
 
@@ -79,6 +79,6 @@ if __name__ == '__main__':
     PI.PIConfig.DEFAULT_TIMEZONE = 'America/Indianapolis'
     with PI.PIServer() as server:
         logging.info("Connected to PI Server %s which is running version %s", server.server_name, server.version)
-        app.run()
+        app.run(host="0.0.0.0")
 
 

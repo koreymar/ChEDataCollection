@@ -7,7 +7,7 @@ clear;
 startdate = '2022-03-16';
 enddate = '2022-03-16';
 
-% Use 24 hour clock times (e.g. 2:00PM is 14:00)
+% Use 24 hour clock times (e.g. 2:00PM is 14:00). All times local to RHIT
 starttime = '14:00';
 endtime = '16:50';
 

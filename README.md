@@ -5,5 +5,7 @@ When running, allows users to query a website to select which data to download f
 
 Server must be running the PI SDK, which means this works only on Windows machines. Clients connect from any web browser that can accept a CSV file download.
 
+Also exposes a /csv route for direct downloads to clients.
+
 Clients for Python, Python Notebooks (Jupyter), Julia, and Matlab are included.
 

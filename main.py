@@ -54,15 +54,15 @@ def download():
 
     if len(points) == 0:
         logging.error("Found no PI datapoints for search term %s", search_term)
-        response = None
+        return 'Found no PI datapoints for search term' + search_term
     else:
         logging.info("Found %s PI points for project %s", len(points), project)
         df = pd.concat([point.interpolated_values(project_start, project_end, interval).to_frame(point.name + ' '
-            + point.units_of_measurement) for point in points], axis = 1)
+            + point.units_of_measurement) for point in points], axis=1)
 
-        df.index.rename('Timestamp', inplace = True)
+        df.index.rename('Timestamp', inplace=True)
 
-        response=make_response(df.to_csv(date_format='%H:%M:%S'))
+        response = make_response(df.to_csv(date_format='%H:%M:%S'))
         csvname = 'AREA' + project + '-' + date + '.csv'
         response.headers['Content-Disposition'] = 'attachment; filename=' + csvname
         response.mimetype = 'text/csv'
@@ -74,7 +74,7 @@ def download():
 def csv():
     """
     /csv route takes in a query string. Example is:
-    /csv?startdate=2022-05-01&starttime=18:00&enddate=2022-05-02&endtime=4:00&interval=10&area=150
+    /csv?startdate=2022-05-01&starttime=18:00&enddate=2022-05-02&endtime=4:00&interval=30s&area=150
     where area is the Unit Ops prefix... e.g. all Instrumentation and Control items are numbered 400
     and interval is time in seconds
     """

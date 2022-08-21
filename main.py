@@ -4,7 +4,7 @@ David Henthorn, Chemical Engineering, 2022
 """
 
 CONST_NAME = "CHE PI Data Portal"
-CONST_VER = "0.03"
+CONST_VER = "0.06"
 CONST_AUTHORS ="Eddie Barry (RHIT ChE, class of 2022) and David Henthorn, RHIT Professor"
 
 # Requires the PIconnect package be installed. This package will install under various OS's, but
@@ -84,7 +84,6 @@ def csv():
         req1 = DataRequest(request.args)
         req1.validate()
         if req1.is_valid:
-            print('Request is valid!')
             logging.info('Valid request %s', req1)
             points = server.search(req1.labarea.search_term)
 
@@ -105,9 +104,10 @@ def csv():
                 logging.info("Sending CSV file %s over http with response info %s", csvname, response)
                 return response
         else:
-            print(req1.errors_to_text())
+            logging.error('Error in /csv route: %s', req1.errors_to_text())
             return req1.errors_to_text()
     else:
+        logging.info('Received empty request to /csv endpoint. Sending instructions.')
         response = '<html><body>'
         response += 'Empty request:<br><br><br>'
         response += ('Example usage: http://hostname:port/csv?startdate=2022-05-01&starttime=18:00' +
@@ -120,6 +120,7 @@ This is a route used for testing. Sends a CSV file filled with zeros to the clie
 """
 @app.route('/tester', methods=['GET'])
 def tester():
+    logging.info('In /tester route. Sending CSV of zeroes for testing.')
     df = pd.DataFrame(np.zeros((10, 5)))
     response = make_response(df.to_csv())
     csvname = 'tester.csv'

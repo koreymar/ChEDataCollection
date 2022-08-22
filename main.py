@@ -115,6 +115,54 @@ def csv():
         response += '</body></html>'
         return response
 
+
+
+@app.route('/excel', methods=['GET'])
+def csv():
+    """
+    /excel route takes in a query string. Example is:
+    /excel?startdate=2022-05-01&starttime=18:00&enddate=2022-05-02&endtime=4:00&interval=30s&area=150
+    where area is the Unit Ops prefix... e.g. all Instrumentation and Control items are numbered 400
+    and interval is time in seconds
+    """
+
+    logging.info('New request for /excel from %s', request.remote_addr)
+    if request.args:
+        req1 = DataRequest(request.args)
+        req1.validate()
+        if req1.is_valid:
+            logging.info('Valid request %s', req1)
+            points = server.search(req1.labarea.search_term)
+
+            if len(points) == 0:
+                logging.error("Found no PI datapoints for search term %s", req1.labarea.search_term)
+                response = None
+            else:
+                logging.info("Found %s PI points for project %s", len(points), req1.area)
+                df = pd.concat([point.interpolated_values(req1.date1, req1.date2, req1.interval).to_frame(point.name + ' '
+                    + point.units_of_measurement) for point in points], axis = 1)
+
+                df.index.rename('Timestamp', inplace = True)
+
+                response=make_response(df.to_excel(date_format='%H:%M:%S'))
+                excelname = 'AREA' + req1.area + '-' + req1.startdate + '.xls'
+                response.headers['Content-Disposition'] = 'attachment; filename=' + excelname
+                response.mimetype = 'application/vnd.ms-excel'
+                logging.info("Sending excel file %s over http with response info %s", excelname, response)
+                return response
+        else:
+            logging.error('Error in /excel route: %s', req1.errors_to_text())
+            return req1.errors_to_text()
+    else:
+        logging.info('Received empty request to /excel endpoint. Sending instructions.')
+        response = '<html><body>'
+        response += 'Empty request:<br><br><br>'
+        response += ('Example usage: http://hostname:port/excel?startdate=2022-05-01&starttime=18:00' +
+                     '&enddate=2022-05-02&endtime=4:00&interval=10s&area=150 <br>')
+        response += '</body></html>'
+        return response
+
+
 """
 This is a route used for testing. Sends a CSV file filled with zeros to the client.
 """

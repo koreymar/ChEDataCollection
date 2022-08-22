@@ -4,8 +4,8 @@ David Henthorn, Chemical Engineering, 2022
 """
 
 CONST_NAME = "CHE PI Data Portal"
-CONST_VER = "0.06"
-CONST_AUTHORS ="Eddie Barry (RHIT ChE, class of 2022) and David Henthorn, RHIT Professor"
+CONST_VER = "0.07"
+CONST_AUTHORS = "Eddie Barry (RHIT ChE, class of 2022) and David Henthorn, RHIT Professor"
 
 # Requires the PIconnect package be installed. This package will install under various OS's, but
 # it only functions on Windows machines with the PI SDK installed and properly setup
@@ -43,7 +43,8 @@ def download():
     project_start = date + " " + start_time
     project_end = date + " " + end_time
 
-    logging.info("Requested dataset with start time of %s, end time of %s, and interval of %s", project_start, project_end, interval)
+    logging.info("Requested dataset with start time of %s, end time of %s, and interval of %s",
+                 project_start, project_end, interval)
 
     if project_num == "*300*":
         search_term = "*-3*"
@@ -57,8 +58,10 @@ def download():
         return 'Found no PI datapoints for search term' + search_term
     else:
         logging.info("Found %s PI points for project %s", len(points), project)
-        df = pd.concat([point.interpolated_values(project_start, project_end, interval).to_frame(point.name + ' '
-            + point.units_of_measurement) for point in points], axis=1)
+        df = pd.concat([
+            point.interpolated_values(project_start, project_end, interval).to_frame(
+                point.name + ' ' + point.units_of_measurement)
+            for point in points], axis=1)
 
         df.index.rename('Timestamp', inplace=True)
 
@@ -89,15 +92,15 @@ def csv():
 
             if len(points) == 0:
                 logging.error("Found no PI datapoints for search term %s", req1.labarea.search_term)
-                response = None
+                return 'Found no PI datapoints for search term'
             else:
                 logging.info("Found %s PI points for project %s", len(points), req1.area)
                 df = pd.concat([point.interpolated_values(req1.date1, req1.date2, req1.interval).to_frame(point.name + ' '
-                    + point.units_of_measurement) for point in points], axis = 1)
+                    + point.units_of_measurement) for point in points], axis=1)
 
-                df.index.rename('Timestamp', inplace = True)
+                df.index.rename('Timestamp', inplace=True)
 
-                response=make_response(df.to_csv(date_format='%H:%M:%S'))
+                response = make_response(df.to_csv(date_format='%H:%M:%S'))
                 csvname = 'AREA' + req1.area + '-' + req1.startdate + '.csv'
                 response.headers['Content-Disposition'] = 'attachment; filename=' + csvname
                 response.mimetype = 'text/csv'
@@ -114,7 +117,6 @@ def csv():
                      '&enddate=2022-05-02&endtime=4:00&interval=10s&area=150 <br>')
         response += '</body></html>'
         return response
-
 
 
 @app.route('/excel', methods=['GET'])
@@ -136,15 +138,15 @@ def excel():
 
             if len(points) == 0:
                 logging.error("Found no PI datapoints for search term %s", req1.labarea.search_term)
-                response = None
+                response = 'Found no PI datapoints for search term'
             else:
                 logging.info("Found %s PI points for project %s", len(points), req1.area)
                 df = pd.concat([point.interpolated_values(req1.date1, req1.date2, req1.interval).to_frame(point.name + ' '
-                    + point.units_of_measurement) for point in points], axis = 1)
+                    + point.units_of_measurement) for point in points], axis=1)
 
-                df.index.rename('Timestamp', inplace = True)
+                df.index.rename('Timestamp', inplace=True)
 
-                response=make_response(df.to_excel(date_format='%H:%M:%S'))
+                response = make_response(df.to_excel(date_format='%H:%M:%S'))
                 excelname = 'AREA' + req1.area + '-' + req1.startdate + '.xls'
                 response.headers['Content-Disposition'] = 'attachment; filename=' + excelname
                 response.mimetype = 'application/vnd.ms-excel'
@@ -163,11 +165,11 @@ def excel():
         return response
 
 
-"""
-This is a route used for testing. Sends a CSV file filled with zeros to the client.
-"""
 @app.route('/tester', methods=['GET'])
 def tester():
+    """
+    This is a route used for testing. Sends a CSV file filled with zeros to the client.
+    """
     logging.info('In /tester route. Sending CSV of zeroes for testing.')
     df = pd.DataFrame(np.zeros((10, 5)))
     response = make_response(df.to_csv())
@@ -192,4 +194,3 @@ if __name__ == '__main__':
             app.run(host="0.0.0.0")
     except Exception as e:
         logging.error('PI Server or WSGI server failed. Exception %s', e)
-

@@ -118,7 +118,7 @@ def csv():
 
 
 @app.route('/excel', methods=['GET'])
-def csv():
+def excel():
     """
     /excel route takes in a query string. Example is:
     /excel?startdate=2022-05-01&starttime=18:00&enddate=2022-05-02&endtime=4:00&interval=30s&area=150
@@ -186,6 +186,10 @@ if __name__ == '__main__':
 
     logging.info("Attempting to connect to PI Server using the PI SDK")
     PI.PIConfig.DEFAULT_TIMEZONE = 'America/Indianapolis'
-    with PI.PIServer() as server:
-        logging.info("Connected to PI Server %s which is running version %s", server.server_name, server.version)
-        app.run(host="0.0.0.0")
+    try:
+        with PI.PIServer() as server:
+            logging.info("Connected to PI Server %s which is running version %s", server.server_name, server.version)
+            app.run(host="0.0.0.0")
+    except Exception as e:
+        logging.error('PI Server or WSGI server failed. Exception %s', e)
+

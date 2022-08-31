@@ -1,0 +1,84 @@
+---
+title: "Chemical Engineering Laboratory Data"
+output:
+  html_document
+---
+
+```{r setup, include=FALSE}
+
+## Turn off auto-code display in Markdown and load libraries.
+
+knitr::opts_chunk$set(echo = FALSE)
+
+library(DT)
+```
+
+## Retrieve Data
+
+Change the values in the code below to import your data into R. You will need to enter inputs for the following variables: 
+
+  - startdate
+  - enddate
+  - starttime
+  - endtime
+  - area
+  - interval
+  
+
+```{r import, echo=TRUE}
+
+## Change these values
+
+## Use YYYY-MM-DD date format.
+startdate <- '2022-03-16'
+enddate <- '2022-03-16'
+
+## Use 24-hour clocks (e.g. 2:00PM is 14:00). All times are local to RHIT. Up to 24 hours of data may be requested at a time.
+starttime <- '14:00'
+endtime <- '16:50'
+
+## For area designations, 150 is Reverse Osmosis, 300 is Fluid Flow, etc.
+area <- '150'
+
+## Sampling data every 30 sections ('30s') is most common, but other values may be chosen.
+interval <- '30s'
+```
+
+```{r call_data}
+
+## This code creates the URL for data retrieval. You should not need to edit this code.
+
+URL_base <- 'http://uolab.rose-hulman.edu:5080/csv?'
+
+data_URL <- paste(URL_base,
+                  'startdate=', startdate,
+                  '&starttime=', starttime, 
+                  '&enddate=', enddate,
+                  '&endtime=', endtime,
+                  '&interval=', interval,
+                  '&area=', area,
+                  sep = '')
+
+## Save retrieved data as a data frame.
+df <- read.csv(url(data_URL))
+
+```
+\
+Based on your inputs, the following URL (`data_URL`) was generated to retrieve your data. Clicking on the link will download the csv file, which is useful if you would prefer to work with the data outside of R.
+\
+\
+`r toString(data_URL)`  
+
+\
+
+## Data Summary
+The retrieved data contains `r nrow(df)` rows and `r ncol(df)` columns and is shown in the table below. Use the search bar and/or filters below each column (click the boxes that say 'all') to quickly puruse the data. *You can perform additional data manipulation in R using this data (saved as variable `df`).*
+\
+\
+
+```{r}
+
+## Summarize data in table that contains column filters.
+
+datatable(data = df, filter = "top")
+```

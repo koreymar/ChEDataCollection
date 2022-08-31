@@ -1,9 +1,8 @@
-# R Markdown Document to Retrieve Lab Data
-# Written by Dr. Marissa Tousley, RHIT ChE Dept.
-# 2022
-
 ---
-title: "Chemical Engineering Laboratory Data"
+title: |
+  ![](https://raw.githubusercontent.com/henthornlab/HMIs/master/rhit-logo-wide.png) 
+  Chemical Engineering Laboratory Data
+author: "Dr. Marissa Tousley, RHIT ChE Department"
 output:
   html_document
 ---
@@ -19,15 +18,14 @@ library(DT)
 
 ## Retrieve Data
 
-Change the values in the code below to import your data into R. You will need to enter inputs for the following variables: 
+Change the values in the code below to import your data into R. You will need to enter inputs for the following variables:
 
-  - startdate
-  - enddate
-  - starttime
-  - endtime
-  - area
-  - interval
-  
+-   startdate
+-   enddate
+-   starttime
+-   endtime
+-   area
+-   interval
 
 ```{r import, echo=TRUE}
 
@@ -67,17 +65,17 @@ data_URL <- paste(URL_base,
 df <- read.csv(url(data_URL))
 
 ```
+
 \
-Based on your inputs, the following URL (`data_URL`) was generated to retrieve your data. Clicking on the link will download the csv file, which is useful if you would prefer to work with the data outside of R.
+Based on your inputs, the following URL (`data_URL`) was generated to retrieve your data. Clicking on the link will download the csv file, which is useful if you would prefer to work with the data outside of R.\
 \
-\
-`r toString(data_URL)`  
+`r toString(data_URL)`
 
 \
 
 ## Data Summary
-The retrieved data contains `r nrow(df)` rows and `r ncol(df)` columns and is shown in the table below. Use the search bar and/or filters below each column (click the boxes that say 'all') to quickly puruse the data. *You can perform additional data manipulation in R using this data (saved as variable `df`).*
-\
+
+The retrieved data contains `r nrow(df)` rows and `r ncol(df)` columns and is shown in the table below. Use the search bar and/or filters below each column (click the boxes that say 'all') to quickly puruse the data. *You can perform additional data manipulation in R using this data (saved as variable `df`).*\
 \
 
 ```{r}

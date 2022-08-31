@@ -1,3 +1,7 @@
+# R Markdown Document to Retrieve Lab Data
+# Written by Dr. Marissa Tousley, RHIT ChE Dept.
+# 2022
+
 ---
 title: "Chemical Engineering Laboratory Data"
 output:

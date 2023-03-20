@@ -4,7 +4,7 @@ David Henthorn, Chemical Engineering, 2022
 """
 
 CONST_NAME = "CHE PI Data Portal"
-CONST_VER = "0.07"
+CONST_VER = "0.09"
 CONST_AUTHORS = "Eddie Barry (RHIT ChE, class of 2022) and David Henthorn, RHIT Professor"
 
 # Requires the PIconnect package be installed. This package will install under various OS's, but
@@ -64,6 +64,12 @@ def download():
             for point in points], axis=1)
 
         df.index.rename('Timestamp', inplace=True)
+
+        # We frequently see columns returned full of "Shutdown" comments because a instrument no longer works.
+        # If the entire column is full of those, delete the whole column.
+
+        df.replace("Shutdown", float("NaN"), inplace=True)
+        df.dropna(how='all', axis=1, inplace=True)
 
         response = make_response(df.to_csv(date_format='%H:%M:%S'))
         csvname = 'AREA' + project + '-' + date + '.csv'

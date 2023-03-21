@@ -58,17 +58,25 @@ def download():
         return 'Found no PI datapoints for search term' + search_term
     else:
         logging.info("Found %s PI points for project %s", len(points), project)
+        logging.info("Concatenating")
         df = pd.concat([
             point.interpolated_values(project_start, project_end, interval).to_frame(
                 point.name + ' ' + point.units_of_measurement)
             for point in points], axis=1)
 
+        logging.info("Cleaning up columns")        
         df.index.rename('Timestamp', inplace=True)
+
+        # The encoding is off. Temporary workaround is to write the dataframe as a CSV, which fixes the encoding. Then read it in.
+        df.to_csv("temp.csv")
+        df = pd.read_csv("temp.csv")
 
         # We frequently see columns returned full of "Shutdown" comments because a instrument no longer works.
         # If the entire column is full of those, delete the whole column.
 
-        df.replace("Shutdown", float("NaN"), inplace=True)
+        #df.replace("Shutdown", np.nan, inplace=True)
+        logging.info("Replacing non-numeric entries") 
+        df.replace("Shutdown", float(np.NaN), inplace=True)
         df.dropna(how='all', axis=1, inplace=True)
 
         response = make_response(df.to_csv(date_format='%H:%M:%S'))

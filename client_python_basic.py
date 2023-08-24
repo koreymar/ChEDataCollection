@@ -15,7 +15,7 @@ area = '150'    # 150 is Reverse Osmosis, 300 is Fluid Flow, etc.
 interval = '30s'  # Sampling data every 30 seconds ('30s') is most common, but other values may be chosen.
 # *************************************************************
 
-data_URL = 'http://uolab.rose-hulman.edu:5080/csv?starttime=' + starttime + '&endtime=' + endtime + '&startdate=' + \
+data_URL = 'http://uolab.rose-hulman.edu/csv?starttime=' + starttime + '&endtime=' + endtime + '&startdate=' + \
            startdate + '&enddate=' + enddate + '&area=' + area + '&interval=' + interval
 
 df = pd.read_csv(data_URL)

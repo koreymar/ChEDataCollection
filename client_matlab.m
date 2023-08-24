@@ -18,7 +18,7 @@ interval = '30s';
 area = '150';
 
 % *****************************************************************
-endpoint = 'http://uolab.rose-hulman.edu:5080/csv?';
+endpoint = 'http://uolab.rose-hulman.edu/csv?';
 dates_times = append('startdate=', startdate, '&enddate=', enddate, '&starttime=', starttime, '&endtime=', endtime);
 url = append(endpoint, dates_times, '&interval=', interval, '&area=', area);
 
